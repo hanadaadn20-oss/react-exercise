@@ -1,8 +1,21 @@
-import {usecCard} from "./useCard";
+// import {usecCard} from "./useCard";
+
+// function App (){
+//   return(
+//     <usedCard />
+//   )
+// }
+// export default usecCard
+
+
+
+import Layout from "./Layout"
 
 function App (){
   return(
-    <usedCard />
+  <>
+  <Layout />
+  </>
   )
 }
-export default usecCard
+export default App
