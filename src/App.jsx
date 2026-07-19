@@ -1,31 +1,62 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
+function App() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-function App (){
-  
- const [x, setX]=useState(0)
- const [y, setY]=useState(0)
-
- useEffect(()=>{
-    const mouseMove=(event)=>{
-setX(event.clientX)
-setY(event.clientY)
+  const handleLogin = () => {
+    if (username !== "" && password !== "") {
+      setIsLoggedIn(true);
+    } else {
+      alert("Fadlan geli Username iyo Password");
     }
+  };
 
-    window.addEventListener("mousemove", mouseMove)
- })
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername("");
+    setPassword("");
+  };
 
-
- return (
-
-
+  return (
     <div>
-<h1>horizantal: {x}px</h1>
-<h1>joog {y}px </h1>
+      {!isLoggedIn ? (
+        <>
+          <h1>Login</h1>
 
+          <div>
+            <label>Username: </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
+          <br />
+
+          <div>
+            <label>Password: </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <br />
+
+          <button onClick={handleLogin}>Login</button>
+        </>
+      ) : (
+        <>
+          <h1>Hello, {username}</h1>
+          <button onClick={handleLogout}>Logout</button>
+        </>
+      )}
     </div>
- )
+  );
 }
 
- 
-export default App
+export default App;
