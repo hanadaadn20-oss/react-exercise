@@ -1,49 +1,23 @@
-import { useState } from "react";
+import React, { useContext } from "react";
 
-const ShoppingCart = () => {
-
-
-
-  const [products, setProducts] =useState([])
-  
-
-  const [productName, setProductName] = useState("")
-  
-  const [productPrice, setProductPrice] = useState('')
-
-  
-   
-
- 
-
+export default function ShoppingCart({ cart, removeFromCart }) {
   return (
-    <div><h2>simple shopping cart</h2>
+    <>
+      <h1>Shopping Cart</h1>
 
-    <div>
-      <h3>add product </h3>
+      <p>Total Items: {cart.length}</p>
 
-      <input type="text" placeholder="add product"/>
+      <ul>
+        {cart.map((item, index) => (
+          <li key={index}>
+            {item.name} - ${item.price}
 
-      <input type="number" placeholder="add price"/>
-      <button>Add Cart</button>
-      
-
-    
-    </div>
-    {
-  products.length > 0 ? (
-    <h3>Added products</h3>
-  ) : (
-    <p>the cart is empty</p>
-  )
+            <button onClick={() => removeFromCart(index)}>
+              Remove
+            </button>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
 }
-
-
-    
-    </div>
-
-  )
-  
-}
-
-export default ShoppingCart;
