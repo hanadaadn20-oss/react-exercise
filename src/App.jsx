@@ -1,238 +1,224 @@
+
 import React, { useState } from "react";
 
-function App() {
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    role: "",
-    experience: "",
-    skills: [],
-    terms: false,
-    notifications: false,
-  });
+export default function App() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [grade, setGrade] = useState("");
+  const [subjects, setSubjects] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState(false);
 
-  const skills = [
-    "React",
-    "JavaScript",
-    "TypeScript",
-    "Node.js",
-    "Python",
-    "Java",
-    "UI Design",
-    "API Development",
-  ];
+  function handleSubject(subject) {
+    setSubjects((prev) =>
+      prev.includes(subject)
+        ? prev.filter((item) => item !== subject)
+        : [...prev, subject]
+    );
+  }
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSkill = (skill) => {
-    if (form.skills.includes(skill)) {
-      setForm({
-        ...form,
-        skills: form.skills.filter((item) => item !== skill),
-      });
-    } else {
-      setForm({
-        ...form,
-        skills: [...form.skills, skill],
-      });
-    }
-  };
-
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
 
-    if (!form.terms) {
-      alert("Please agree to the terms and conditions.");
+    const newErrors = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.com$/i.test(email.trim())) {
+      newErrors.email = "Enter a valid email ending in .com";
+    }
+
+    if (!grade) {
+      newErrors.grade = "Please select a grade";
+    }
+
+    if (subjects.length === 0) {
+      newErrors.subjects = "Select at least one subject";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      setSuccess(false);
       return;
     }
 
-    alert("Application submitted successfully!");
-    console.log(form);
+    setSuccess(true);
+  }
+
+  const inputStyle = {
+    width: "100%",
+    padding: "12px",
+    border: "1px solid #999",
+    borderRadius: "5px",
+    boxSizing: "border-box",
+    fontSize: "16px",
+    marginTop: "8px",
+  };
+
+  const errorStyle = {
+    color: "#b42318",
+    fontSize: "14px",
+    marginTop: "6px",
   };
 
   return (
-    <div style={styles.page}>
-      <form style={styles.form} onSubmit={handleSubmit}>
-        <h1 style={styles.title}>Developer Application Form</h1>
+    <div style={{
+      minHeight: "100vh",
+      background: "#f5f5f5",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: "20px",
+      boxSizing: "border-box",
+      fontFamily: "Arial, sans-serif",
+    }}>
+      <div style={{
+        background: "white",
+        padding: "30px",
+        borderRadius: "10px",
+        boxShadow: "0 2px 12px #00000015",
+        width: "100%",
+        maxWidth: "480px",
+      }}>
+        {success ? (
+          <div>
+            <h2 style={{ color: "green" }}>
+              Registration Successful!
+            </h2>
 
-        {/* Full Name */}
-        <label style={styles.label}>Full Name</label>
-        <input
-          type="text"
-          name="fullName"
-          value={form.fullName}
-          onChange={handleChange}
-          style={styles.input}
-        />
+            <p>Your registration has been completed successfully.</p>
 
-        {/* Email */}
-        <label style={styles.label}>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          style={styles.input}
-        />
+            <hr />
 
-        {/* Role */}
-        <label style={styles.label}>Role</label>
-        <select
-          name="role"
-          value={form.role}
-          onChange={handleChange}
-          style={styles.input}
-        >
-          <option value="">Select a role</option>
-          <option value="Frontend Developer">Frontend Developer</option>
-          <option value="Backend Developer">Backend Developer</option>
-          <option value="Full Stack Developer">
-            Full Stack Developer
-          </option>
-          <option value="UI Designer">UI Designer</option>
-        </select>
+            <p><strong>Student Name:</strong> {name}</p>
+            <p><strong>Email:</strong> {email}</p>
+            <p><strong>Grade Level:</strong> {grade}</p>
+            <p><strong>Subjects:</strong> {subjects.join(", ")}</p>
 
-        {/* Experience */}
-        <label style={styles.label}>Years of Experience</label>
-        <input
-          type="number"
-          name="experience"
-          value={form.experience}
-          onChange={handleChange}
-          style={styles.input}
-        />
+            <button
+              onClick={() => {
+                setName("");
+                setEmail("");
+                setGrade("");
+                setSubjects([]);
+                setErrors({});
+                setSuccess(false);
+              }}
+              style={{
+                ...inputStyle,
+                background: "#d9362b",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Register Another Student
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} noValidate>
+            <h2 style={{ marginTop: 0 }}>
+              Student Registration
+            </h2>
 
-        {/* Skills */}
-        <label style={styles.label}>Skills</label>
+            <label htmlFor="name"><strong>Student Name</strong></label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={inputStyle}
+              aria-invalid={!!errors.name}
+            />
+            {errors.name && <p style={errorStyle}>{errors.name}</p>}
 
-        <div style={styles.skills}>
-          {skills.map((skill) => (
-            <label key={skill} style={styles.checkboxLabel}>
+            <div style={{ marginTop: "22px" }}>
+              <label htmlFor="email"><strong>Email</strong></label>
               <input
-                type="checkbox"
-                checked={form.skills.includes(skill)}
-                onChange={() => handleSkill(skill)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={inputStyle}
+                aria-invalid={!!errors.email}
               />
-              {skill}
-            </label>
-          ))}
-        </div>
+              {errors.email && (
+                <p style={errorStyle}>{errors.email}</p>
+              )}
+            </div>
 
-        {/* Terms */}
-        <label style={styles.checkboxLabel}>
-          <input
-            type="checkbox"
-            name="terms"
-            checked={form.terms}
-            onChange={handleChange}
-          />
-          I agree to the terms and conditions
-        </label>
+            <div style={{ marginTop: "22px" }}>
+              <label htmlFor="grade"><strong>Grade Level</strong></label>
+              <select
+                id="grade"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                style={inputStyle}
+                aria-invalid={!!errors.grade}
+              >
+                <option value="">Select Grade</option>
+                <option value="Grade 9">Grade 9</option>
+                <option value="Grade 10">Grade 10</option>
+                <option value="Grade 11">Grade 11</option>
+                <option value="Grade 12">Grade 12</option>
+              </select>
+              {errors.grade && (
+                <p style={errorStyle}>{errors.grade}</p>
+              )}
+            </div>
 
-        {/* Notifications */}
-        <label style={styles.checkboxLabel}>
-          <input
-            type="checkbox"
-            name="notifications"
-            checked={form.notifications}
-            onChange={handleChange}
-          />
-          Receive notifications about new opportunities
-        </label>
+            <div style={{ marginTop: "22px" }}>
+              <strong>Subjects Interest</strong>
 
-        {/* Submit */}
-        <button type="submit" style={styles.button}>
-          Submit Application
-        </button>
-      </form>
+              {["Mathematics", "Science", "English"].map((subject) => (
+                <label
+                  key={subject}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    marginTop: "12px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={subjects.includes(subject)}
+                    onChange={() => handleSubject(subject)}
+                  />
+                  {subject}
+                </label>
+              ))}
+
+              {errors.subjects && (
+                <p style={errorStyle}>{errors.subjects}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "14px",
+                marginTop: "25px",
+                background: "#d9362b",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                fontSize: "16px",
+                cursor: "pointer",
+              }}
+            >
+              Register
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    backgroundColor: "#f5f5f5",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "30px 15px",
-    fontFamily: "Arial, sans-serif",
-    boxSizing: "border-box",
-  },
-
-  form: {
-    width: "100%",
-    maxWidth: "600px",
-    backgroundColor: "white",
-    padding: "35px",
-    borderRadius: "10px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-    boxSizing: "border-box",
-  },
-
-  title: {
-    textAlign: "center",
-    fontSize: "25px",
-    marginBottom: "35px",
-    color: "#222",
-  },
-
-  label: {
-    display: "block",
-    fontWeight: "600",
-    marginBottom: "8px",
-    marginTop: "20px",
-    color: "#333",
-  },
-
-  input: {
-    width: "100%",
-    height: "45px",
-    padding: "0 12px",
-    border: "1px solid #ddd",
-    borderRadius: "7px",
-    outline: "none",
-    fontSize: "15px",
-    boxSizing: "border-box",
-    backgroundColor: "white",
-  },
-
-  skills: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "18px 30px",
-    marginBottom: "25px",
-  },
-
-  checkboxLabel: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    fontSize: "15px",
-    color: "#333",
-    marginBottom: "18px",
-  },
-
-  button: {
-    width: "100%",
-    height: "48px",
-    marginTop: "10px",
-    border: "none",
-    borderRadius: "7px",
-    backgroundColor: "#e85b4f",
-    color: "white",
-    fontSize: "16px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-};
-
-export default App;
